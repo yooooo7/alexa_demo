@@ -10,6 +10,10 @@ from .nlg import movie_reviews_summarise_sentiment, sentimentIntensity_analyzer,
 
 import json
 
+@app.route('/', methods = ['GET'])
+def index():
+    return Response(json.dumps({'hello': 'your server is running successfully!'}), mimetype='application/json')
+
 @app.route('/test', methods = ['POST'])
 def test():
     # check if request body exist

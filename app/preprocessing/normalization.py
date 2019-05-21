@@ -4,7 +4,7 @@ from nltk.stem import PorterStemmer
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
-# nltk.download('wordnet')
+nltk.download('wordnet')
 
 def normalization(sentence):
     #1. lower case

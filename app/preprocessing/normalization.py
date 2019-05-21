@@ -5,6 +5,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 
 nltk.download('wordnet')
+nltk.download('punkt')
 
 def normalization(sentence):
     #1. lower case

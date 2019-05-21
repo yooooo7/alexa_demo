@@ -29,7 +29,7 @@ def search_movie(movie_title: str, page: int = 1, year: int = None, primary_rele
     Returns:
     json formatted response of movie list
     """
-    url = f'{HOST}search/movie'
+    url = '{}search/movie'.format(HOST)
     p = {
         'language': 'en-US',
         'query': movie_title,
@@ -50,7 +50,7 @@ def movie_reviews(movie_id, page: int = 1) -> object:
     Returns:
     json formatted movie reviews list
     """
-    url = f'{HOST}movie/{movie_id}/reviews'
+    url = '{}movie/{}/reviews'.format(HOST, movie_id)
     p = { 'page': page }
     query = {**params, **p}
     return send_request(url, query)

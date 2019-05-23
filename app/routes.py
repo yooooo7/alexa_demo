@@ -74,7 +74,7 @@ def semtiment_rate():
         rate = sentiments_count[sentiment] / total
         sentiment_rates[sentiment] = round(rate, 2)
     
-    return Response(json.dumps(sentiment_rates), mimetype='application/json')
+    return Response(json.dumps({ 'output': sentiment_rates }), mimetype='application/json')
 
 def check_request():
     # check if request body exist

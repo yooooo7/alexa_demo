@@ -82,17 +82,25 @@ def entity_temp(candidates, entity):
 
     entityTemplate = ''
     for entityType in entityTypes:
+
         if entityType == 'MovieActor':
             # find two actors of the movie
             if entity[1] is None:
                 return False, 'Did not detect any movie'
     
             movie_title = ' '.join(entity[1])
-            actors = search_movie_actors(movie_title)
+            try:
+                actors = search_movie_actors(movie_title)
+            except Exception as e:
+                return False, 'TMDB API error {}'.format(e.args)
+            
             if len(actors) < 2:
                 return False, 'Don\'t have enough actors information'
             
             entityTemplate += random.sample(candidates['MovieActorTemplates'], 1)[0].format(actors[0], actors[1])
+
+        if entityType == 'ifHaveSeen':
+            pass
 
     return (False, 'do not find vaild entity type') if entityTemplate is '' else (True, entityTemplate)
 

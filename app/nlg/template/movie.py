@@ -19,6 +19,15 @@ MOVIE_TEMPLATE = [
         'templates': ['']
     },
     {
+        'needSentiment': False,
+        'entityType': ['ifHaveSeen'],
+        'ifHaveSeenTemplates': {
+            True: [''],
+            False: ['']
+        },
+        'templates': ['']
+    },
+    {
         'needSentiment': True,
         'sentimentTemplates':  {
             'pos': [''],

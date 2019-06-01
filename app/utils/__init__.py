@@ -1,0 +1,1 @@
+from .sentiment_analyzer import sentimentIntensity_analyzer

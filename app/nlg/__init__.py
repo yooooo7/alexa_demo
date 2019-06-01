@@ -1,5 +1,5 @@
-from .analyzers import sentimentIntensity_analyzer
 from .summarizers import lexRank_summarizer
+from ..utils import sentimentIntensity_analyzer
 
 # using movie title to get a pd.dataframe of reviews, summaries and sentiments
 def movie_reviews_summarise_sentiment(movie_title: str, reviews: list, summarizer, summary_max_length: int, analyzer) -> list:

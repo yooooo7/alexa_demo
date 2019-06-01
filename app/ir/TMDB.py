@@ -55,6 +55,46 @@ def movie_reviews(movie_id, page: int = 1) -> object:
     query = {**params, **p}
     return send_request(url, query)
 
+# get movie related actors and staffs information
+def movie_credits(movie_id) -> object:
+    """
+    Arguments:
+    movie_id -- TMDB/IMDB movie ID
+    
+    Returns:
+    json formatted movie related people (actors and staffs) list
+    """
+    url = f'{HOST}movie/{movie_id}/credits'
+    p = {}
+    query = {**params, **p}
+    return send_request(url, query)
+
+def search_movie_actors(movie_title: str, year: int = None, primary_release_year:int = None) -> list:
+    # get search results by search movie API
+    search_results = search_movie(movie_title, year = year, primary_release_year = primary_release_year)
+
+    # if error occur print that error and return None
+    if 'results' not in search_results:
+        print(search_results)
+        return None
+
+    search_results = search_results['results']
+
+    # check if result exist
+    if len(search_results) == 0:
+        print('Can not find any results')
+        return None
+
+    # get current movie overview and ID
+    searched_movie = search_results[0]
+    movie_id = searched_movie['id']
+
+    # get movie actors by movie credits API
+    actor_results = movie_credits(movie_id)['cast']
+    actors = [ actor['name'] for actor in actor_results ]
+
+    return actors
+
 # get movie overview and reviews based on movie title
 def search_movie_overview_reviews(movie_title: str, year: int = None, primary_release_year:int = None) -> object:
     """

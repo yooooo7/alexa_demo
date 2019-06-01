@@ -2,100 +2,110 @@ from flask import request, Response
 
 from app import app
 
-from .ir import search_movie, search_movie_overview_reviews
-from .nlu import NLU
+from .ir import search_movie, search_movie_overview_reviews, search_movie_actors
+from .nlu import NLU, topic_detection
 from .nlg import movie_reviews_summarise_sentiment, sentimentIntensity_analyzer, lexRank_summarizer
+from .nlg import MOVIE_TEMPLATE, GREETING_TAMPLATE
 
 import json
 from collections import Counter
 import random
 
-dialog_counter = 0
+greeting_dialog_counter = 0
+dialog_counter = {
+    'movie': 0,
+    'sport': 0
+}
 
-TAMPLATE = [
-    { 
-        'needSentiment': False,
-        'entityType': None,
-        'templates':  ['Hi, this is Sydney Jack. How are you?', 'how are you?', 'how\'s it going?']
-    },
-    { 
-        'needSentiment': True,
-        'entityType': None,
-        'sentimentTemplates':  {
-            'pos': ['That\'s good!', 'Great!'],
-            'other': [''],
-            'neg': ['Sorry to hear that.']
-        },
-        'templates': ['Sports or movies are topics you could be interested in and we could talk about any of them.']
-    },
-    { 
-        'needSentiment': False,
-        'entityType': ['Movie', 'Sport'],
-        'MovieTemplates': [
-            'Sure. Have you seen a movie recently?', 
-            'No problem. Did you see a movie these days?', 
-            'Certainly. Have you watched a film over the past few days?'
-        ],
-        'SportTemplates': [''],
-        'templates': ['']
-    },
-    { 
-        'needSentiment': False,
-        'entityType': ['MovieActor'],
-        'MovieActorTemplates': [
-            'Is that the film with {} and {}?', 
-            'Is that movie the one depicting {} and {}?', 
-            'Are {} and {} the stars in the movie?'
-        ],
-        'templates': ['']
-    }
-]
+current_topic = None
 
 @app.route('/', methods = ['GET'])
 def index():
     return Response(json.dumps({'hello': 'your server is running successfully!'}), mimetype='application/json')
 
-def semtiment_rate(result):
-    # count sentiments
-    sentiments = [ item['sentiment'] for item in result ]
-    sentiments_count = Counter(sentiments)
-    
-    # calculate rates
-    sentiment_rates = {}
-    total = len(sentiments)
-    for sentiment in sentiments_count:
-        rate = sentiments_count[sentiment] / total
-        sentiment_rates[sentiment] = round(rate, 2)
-    
-    return Response(json.dumps({ 'output': sentiment_rates }), mimetype='application/json')
-
 @app.route('/dialog', methods = ['POST'])
 def dialogue_flow():
+    global greeting_dialog_counter
     global dialog_counter
+    global current_topic
 
     # check request
     has_request, message = check_request()
     if not has_request:
+        clear_globals()
         return Response(json.dumps(message), mimetype='application/json')
     
     entity, user_sentiment = NLU(message)
 
-    candidates = TAMPLATE[dialog_counter]
-    sentimentTemplate = ''
-    if candidates['needSentiment']:
-        if user_sentiment not in ['pos', 'neg']:
-            user_sentiment = 'other'
-        sentimentTemplate = random.sample(candidates['sentimentTemplates'][user_sentiment], 1)[0]
-    
-    template = sentimentTemplate + ' ' + random.sample(candidates['templates'], 1)[0]
+    if greeting_dialog_counter < len(GREETING_TAMPLATE):
 
-    dialog_counter = 0 if (dialog_counter + 1) >= len(TAMPLATE) else dialog_counter + 1
+        candidates = GREETING_TAMPLATE[greeting_dialog_counter]
+        greeting_dialog_counter += 1
+
+        sentimentTemplate = sentiment_temp(candidates, user_sentiment)
+        template = sentimentTemplate + random.sample(candidates['templates'], 1)[0]
+    else:
+        # topic id
+        if list(dialog_counter.values()) == [0] * len(dialog_counter):
+            current_topic = topic_detection(message)
+            if current_topic is None:
+                Response(json.dumps({ 'output': 'I am still learning this topic' }), mimetype='application/json')
+                return
+        
+        current_template = MOVIE_TEMPLATE if current_topic == 'movie' else None # Todo
+        current_counter = dialog_counter[current_topic]
+        candidates = current_template[current_counter]
+        
+        dialog_counter[current_topic] += 1
+
+        sentimentTemplate = sentiment_temp(candidates, user_sentiment)
+        isVaild, entityTemplate = entity_temp(candidates, entity)
+        if not isVaild:
+            clear_globals()
+            return Response(json.dumps({ 'error': entityTemplate }), mimetype='application/json')
+        template = sentimentTemplate + entityTemplate + random.sample(candidates['templates'], 1)[0]
 
     return Response(json.dumps({ 'output': template }), mimetype='application/json')
 
-def dialog_logic(dialog_counter):
-    pass
+def clear_globals():
+    global greeting_dialog_counter
+    global dialog_counter
+    global current_topic
+    greeting_dialog_counter = 0
+    current_topic = None
+    dialog_counter = {'movie': 0, 'sport': 0}
 
+def entity_temp(candidates, entity):
+    entityTypes = candidates['entityType']
+    if entityTypes is None:
+            return True, ''
+
+    entityTemplate = ''
+    for entityType in entityTypes:
+        if entityType == 'MovieActor':
+            # find two actors of the movie
+            if entity[1] is None:
+                return False, 'Did not detect any movie'
+    
+            movie_title = ' '.join(entity[1])
+            actors = search_movie_actors(movie_title)
+            if len(actors) < 2:
+                return False, 'Don\'t have enough actors information'
+            
+            entityTemplate += random.sample(candidates['MovieActorTemplates'], 1)[0].format(actors[0], actors[1])
+
+    return (False, 'do not find vaild entity type') if entityTemplate is '' else (True, entityTemplate)
+
+def sentiment_temp(candidates, user_sentiment):
+    if not candidates['needSentiment']:
+        return ''
+
+    if user_sentiment not in ['pos', 'neg']:
+        user_sentiment = 'other'
+    sentimentTemplate = random.sample(candidates['sentimentTemplates'][user_sentiment], 1)[0]
+    
+    return sentimentTemplate
+    
 def check_request():
     # check if request body exist
     if not request.json:

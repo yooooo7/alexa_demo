@@ -3,10 +3,11 @@ MOVIE_TEMPLATE = [
         'needSentiment': False,
         'entityType': None,
         'templates': [
-            'Sure. Have you seen a movie recently?',
-            'No problem. Did you see a movie these days?',
-            'Certainly. Have you watched a film over the past few days?'
+            'Sure. Have you seen a movie recently? What was that',
+            'Let us chat. Did you see a movie these days? can you tell me the name',
+            'Certainly. Have you watched a film over the past few days? what was that'
         ]
+        #done0 要是回答no 跳3
     },
     {
         'needSentiment': False,
@@ -17,73 +18,105 @@ MOVIE_TEMPLATE = [
             'Are {} and {} the stars in the movie?'
         ],
         'templates': ['']
+        #done1
+    }, 
+    {
+        'needSentiment': True,
+        'entityType': ['MovieDes'],
+        'sentimentTemplates': {
+            'pos': ['I want to share you the story of it.'],
+            'neg': ['See you!']
+        },
+        'MovieDesTemplates': ['{}'],
+        'templates': ['']
+        #done2
     },
     {
         'needSentiment': False,
-        'entityType': ['ifHaveSeen'],
-        'ifHaveSeenTemplates': {
-            True: [''],
-            False: ['']
-        },
-        'templates': ['']
-    },
-    {
-        'needSentiment': True,
-        'sentimentTemplates':  {
-            'pos': [''],
-            'other': [''],
-            'neg': ['Can you tell me about it then.']
-        },
-        'entityType': ['MovieDescription'],
-        'template':['{}']
-    },
-    {
-        'needSentiment': True,
         'entityType': None,
-        'templates': [
+        'templates':[
             'What is your all time favourite movie?',
             'Do you have one favourite movie? Which one is it?',
-            'What is movie that you like all-time?']
+            'What is movie that you like all-time?'
+            ]
+        #done3
     },
-
     {
         'needSentiment': False,
-        'entityType': ['MovieTitle'],
-        # func返回rate最高电影->movie description
-        'templates': ['I like {} best! {}']
+        'entityType': ['MovieName', 'MovieDes'],
+        'MovieNameTemplates':[
+            'my best friend and I like the {} best.',
+            '{} is my favorite.',
+            '{} is amazing.',
+            '{}, I cannot forget it since I first time watched it'
+            ],
+        'MovieDesTemplates': ['{}'],
+        'templates': ['']
+        #todo4
     },
     {
         'needSentiment': True,
+        'entityType': None,
         'sentimentTemplates':  {
-            'pos': ['what do you like about it',
-                    'how woudl you rate it',
-                    'what impress on you most'],
-            'other': [''],
-            'neg': ['can you tell me why'],
+            'pos': [
+                'How do you like the film?'
+                'tell me more about your feelings',
+                'Amazing, tell me more'
+            ],
+            'other': [
+                'tell me more about what do you think',
+                'I see, can you comment more'
+            ],
+            'neg': [
+                'Why you comment negatively about this film',
+                'may I ask for the reason'
+            ]
         },
-        'entityType':None,
-        'template':['{}']
-    },
+        'templates': ['']
+    },  #done5
+    {
+        'needSentiment': True,
+        'entityType':['MovieReviews'],
+        'sentimentTemplates':  {
+            'pos': ['Interesting','wow','amazing','good to hear that'],
+            'other': ['I see','you are thoughtful','well'],
+            'neg': ['Well','I see','any way, it did well at the box office']
+        },
+        'MovieReviewsTemplates':['some online users think {}'],
+        'template':['']
+    }, #done6
+    {
+        'needSentiment': False,
+        'entityType': ['MovieActor'],
+        'MovieActorTemplate':['It stars {} and {}',
+                    'I like the performance of {} and {} in it'],
+        'templates': ['']  
+    },#done7
+    {
+        'needSentiment': False,
+        'entityType': ['MovieLable'],
+        'MovieLableTemplates': ['and this film is labeled {},{} and {}',
+                                'it can be found under the category of {}, {} and {}',
+                                'it is labled as {}, {} and {}'],
+        'templates':['']  
+    },#done8
     {
         'needSentiment': True,
         'sentimentTemplates':  {
-            'pos': ['I totally agree',
-                    'Wow',
-                    'That is interesting'],
-            'other': ['I see',
-                      'you have a deep understanding of this movie'],
-            'neg': ['It seems like you have thought in depth']},
-        'entityType':None,
-        'template': ['{}']  # imdb user comments according to user sentiment
-    },
+            'pos': ['Interesting','wow','amazing','good to hear that','I like talking with you'],
+            'other': ['I see','well','it is a very good experience talking with you','that is true'],
+            'neg': ['Well','I see','that is true']}
+        },
     {
         'needSentiment': False,
-        'entityType': None,
-        'templates': ['It stars {}']  # actors
-    },
+        'entityType': ['ActorMovie'],
+        'MovieActor2':['have you seen {} other film'],
+        'templates': ['']  
+    }, #done9
     {
         'needSentiment': False,
-        'entityType': None,
-        'templates': ['and this film is labeled {}']  # movie categories/labels
-    }
+        'entityType': ['RecommonActor2Movie'],
+        'MovieActor2':['I highly recommend you {}, {}'], # 通过actor找电影 再找介绍
+        'templates': [''] 
+    } #10要是回答no 跳回4
 ]

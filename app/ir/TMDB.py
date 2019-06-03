@@ -40,6 +40,28 @@ def search_movie(movie_title: str, page: int = 1, year: int = None, primary_rele
     query = {**params, **p}
     return send_request(url, query)
 
+def search_movie_title(movie_title: str, page: int = 1, year: int = None, primary_release_year: int = None) -> object:
+    # get search results by search movie API
+    search_results = search_movie(movie_title, year = year, primary_release_year = primary_release_year)
+
+    # if error occur print that error and return None
+    if 'results' not in search_results:
+        print(search_results)
+        return None
+
+    search_results = search_results['results']
+
+    # check if result exist
+    if len(search_results) == 0:
+        print('Can not find any results')
+        return None
+
+    # get current movie overview and ID
+    searched_movie = search_results[0]
+    movie_name = searched_movie['title']
+    
+    return movie_name
+
 # get movie reviews
 def movie_reviews(movie_id, page: int = 1) -> object:
     """

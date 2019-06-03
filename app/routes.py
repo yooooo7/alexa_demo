@@ -2,7 +2,7 @@ from flask import request, Response
 
 from app import app
 
-from .ir import search_movie, search_movie_overview_reviews, search_movie_actors
+from .ir import search_movie, search_movie_overview_reviews, search_movie_actors, search_movie_title
 from .nlu import NLU, topic_detection
 from .nlg import movie_reviews_summarise_sentiment, sentimentIntensity_analyzer, lexRank_summarizer
 from .nlg import MOVIE_TEMPLATE, GREETING_TAMPLATE
@@ -16,8 +16,8 @@ dialog_counter = {
     'movie': 0,
     'sport': 0
 }
-
 current_topic = None
+movie_title = None
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -28,6 +28,7 @@ def dialogue_flow():
     global greeting_dialog_counter
     global dialog_counter
     global current_topic
+    global movie_title
 
     # check request
     has_request, message = check_request()
@@ -59,23 +60,27 @@ def dialogue_flow():
         dialog_counter[current_topic] += 1
 
         sentimentTemplate = sentiment_temp(candidates, user_sentiment)
-        isVaild, entityTemplate = entity_temp(candidates, entity)
+        isVaild, entityTemplate = entity_temp(candidates, entity, user_sentiment)
         if not isVaild:
             clear_globals()
             return Response(json.dumps({ 'error': entityTemplate }), mimetype='application/json')
         template = sentimentTemplate + entityTemplate + random.sample(candidates['templates'], 1)[0]
-
     return Response(json.dumps({ 'output': template }), mimetype='application/json')
 
 def clear_globals():
     global greeting_dialog_counter
     global dialog_counter
     global current_topic
+    global movie_title
+
     greeting_dialog_counter = 0
     current_topic = None
     dialog_counter = {'movie': 0, 'sport': 0}
+    movie_title = None
 
-def entity_temp(candidates, entity):
+def entity_temp(candidates, entity, user_sentiment):
+    global movie_title
+
     entityTypes = candidates['entityType']
     if entityTypes is None:
             return True, ''
@@ -85,10 +90,12 @@ def entity_temp(candidates, entity):
 
         if entityType == 'MovieActor':
             # find two actors of the movie
-            if entity[1] is None:
-                return False, 'Did not detect any movie'
-    
-            movie_title = ' '.join(entity[1])
+            if entity[1] is not None:
+                movie_title = ' '.join(entity[1])
+            
+            if movie_title is None:
+                return False, 'Did not detect any movie title'
+
             try:
                 actors = search_movie_actors(movie_title)
             except Exception as e:
@@ -98,10 +105,63 @@ def entity_temp(candidates, entity):
                 return False, 'Don\'t have enough actors information'
             
             entityTemplate += random.sample(candidates['MovieActorTemplates'], 1)[0].format(actors[0], actors[1])
+        
+        if entityType == 'MovieName':
+            if entity[1] is not None:
+                movie_title = ' '.join(entity[1])
+            
+            if movie_title is None:
+                return False, 'Did not detect any movie title'
+            
+            try:
+                movie_name = search_movie_title(movie_title)
+            except Exception as e:
+                return False, 'TMDB API error {}'.format(e.args)
 
-        if entityType == 'ifHaveSeen':
-            pass
+            entityTemplate += random.sample(candidates['MovieNameTemplates'], 1)[0].format(movie_name)
+        
+        if entityType == 'MovieDes':
+            if entity[1] is not None:
+                movie_title = ' '.join(entity[1])
+            
+            if movie_title is None:
+                return False, 'Did not detect any movie title'
+            
+            try:
+                movie_des = search_movie_overview_reviews(movie_title)['overview']
+            except Exception as e:
+                return False, 'TMDB API error {}'.format(e.args)
 
+            entityTemplate += random.sample(candidates['MovieDesTemplates'], 1)[0].format(movie_des)
+
+        # if entityType == 'Reviews':
+        #     try: 
+        #         isValid, reviews = sentence2reviews(entity[1], user_sentiment)
+        #     except Exception as e:
+        #         return False, 'TMDB API error {}'.format(e.args)
+
+        #     entityTemplate += random.sample(candidates['ReviewsTemplates'], 1)[0].format(reviews)
+        
+        # if entityType == 'MovieActor1':
+        #     movie_title = ' '.join(entity[1])
+        #     try:
+        #         actors = search_movie_actors(movie_title)
+        #     except Exception as e:
+        #         return False, 'TMDB API error {}'.format(e.args)   
+        #     if len(actors) < 2:
+        #             return False, 'Don\'t have enough actors information'
+                
+        #     entityTemplate += random.sample(candidates['MovieActor1Templates'], 1)[0].format(actors[0], actors[1])
+        
+        # if entityType == 'MovieLable':
+        #     movie_title = ' '.join(entity[1])
+        #     pass
+        
+        # if entityType == 'ActorMovie':
+        #     entityTemplate += random.sample(candidates['ActorMovieTemplates'], 1)[0].format(actors[0])
+
+        # if entityType == 'RecommonActor2Movie':
+        #     pass       
     return (False, 'do not find vaild entity type') if entityTemplate is '' else (True, entityTemplate)
 
 def sentiment_temp(candidates, user_sentiment):
@@ -113,7 +173,7 @@ def sentiment_temp(candidates, user_sentiment):
     sentimentTemplate = random.sample(candidates['sentimentTemplates'][user_sentiment], 1)[0]
     
     return sentimentTemplate
-    
+
 def check_request():
     # check if request body exist
     if not request.json:
@@ -123,21 +183,21 @@ def check_request():
 
     return True, request.json['input']
 
-def sentence2reviews(movie_title):
-    if not movie_title:
-        return False, {'output': 'I don\'t know this movie right now'}
-
-    movie_title = ' '.join(movie_title)
-
+def sentence2reviews(movie_title, user_sentiment):
     # get movie reviews list
     try:
         search_result = search_movie_overview_reviews(movie_title)
+        for i in range(len(search_result)):
+            if search_result[i]['sentiment'] == user_sentiment:
+                reviews = search_result[i]['summary']
+                #reviews = search_result[i]['reviews']
+            break
+        
     except Exception as e:
         return False, {'error': 'TMDB API error {}'.format(e.args)}
     
     if search_result == None:
         return False, {'error': 'TMDB API didn\'t find any result'}
     
-    reviews = search_result['reviews']
-
-    return True, [movie_title, reviews]
+    
+    return True, reviews

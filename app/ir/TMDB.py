@@ -91,7 +91,7 @@ def movie_credits(movie_id) -> object:
     query = {**params, **p}
     return send_request(url, query)
 
-def search_movie_actors(movie_title: str, year: int = None, primary_release_year:int = None) -> list:
+def search_movie_actors(movie_title: str, year: int = None, primary_release_year:int = None, k: int = 0) -> list:
     # get search results by search movie API
     search_results = search_movie(movie_title, year = year, primary_release_year = primary_release_year)
 
@@ -115,7 +115,10 @@ def search_movie_actors(movie_title: str, year: int = None, primary_release_year
     actor_results = movie_credits(movie_id)['cast']
     actors = [ actor['name'] for actor in actor_results ]
 
-    return actors
+    return actors[:k] if k <= len(actors) else actors
+
+def search_movie_overview(movie_title: str, year: int = None, primary_release_year:int = None):
+    return search_movie_overview_reviews(movie_title, year, primary_release_year)['overview']
 
 # get movie overview and reviews based on movie title
 def search_movie_overview_reviews(movie_title: str, year: int = None, primary_release_year:int = None) -> object:

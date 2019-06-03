@@ -1,1 +1,1 @@
-from .TMDB import search_movie, search_movie_overview_reviews, search_movie_actors, search_movie_title, search_movie_overview
+from .TMDB import search_movie, search_movie_overview_reviews, search_movie_actors, search_movie_title, search_movie_overview, search_movie_2_actors

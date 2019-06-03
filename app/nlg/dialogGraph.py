@@ -1,19 +1,22 @@
-from ..ir import search_movie_actors, search_movie_overview
+from ..ir import search_movie_2_actors, search_movie_overview
 import random
 
 class Node():
-    def __init__(self, templates: list, info: list = None):
+    def __init__(self, templates: list, func = None):
         self.templates = templates
         self.sentiment = None
         self.entities = None
-        self.info = info
+        self.func = func
     
-    def template2sentence(self):
+    def template2sentence(self, arg):
         sentence = random.sample(self.templates, 1)[0]
 
-        if self.info is None:
+        if self.func is None:
             return sentence
         
+        values = self.func(arg)
+        sentence = random.sample(self.templates, 1)[0].format(*values)
+
         return sentence
 
 
@@ -42,16 +45,16 @@ NODE_3_1 = Node(
         'Is that movie the one depicting {} and {}?',
         'Are {} and {} the stars in the movie?'
     ],
-    info = [search_movie_actors]
+    func = search_movie_2_actors
 )
 
 NODE_4_1 = Node(
     templates = ['I want to share you the story of it.{}'],
-    info = [search_movie_overview]
+    func = search_movie_overview
 )
 NODE_4_2 = Node(
     templates = ['I want to share you the story of it even you do not like it.{}'],
-    info = [search_movie_overview]
+    func = search_movie_overview
 )
 
 dialog_mapping = {
@@ -80,6 +83,6 @@ dialog_mapping = {
 
     NODE_3_1: {
         NODE_4_1: { 'sentiment': ['pos'], 'entities': None },
-        NODE_4_1: { 'sentiment': ['neg', 'other'], 'entities': None },
+        NODE_4_2: { 'sentiment': ['neg', 'other'], 'entities': None }
     }
 }

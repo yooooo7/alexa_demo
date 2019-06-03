@@ -117,8 +117,15 @@ def search_movie_actors(movie_title: str, year: int = None, primary_release_year
 
     return actors[:k] if k <= len(actors) else actors
 
+def search_movie_2_actors(movie_title: str, year: int = None, primary_release_year:int = None):
+    actors = search_movie_actors(movie_title, year = year, primary_release_year = primary_release_year, k = 2)
+    if len(actors) < 2:
+        return ['do not have enough actors', 'do not have enough actors']
+    return actors
+
 def search_movie_overview(movie_title: str, year: int = None, primary_release_year:int = None):
-    return search_movie_overview_reviews(movie_title, year, primary_release_year)['overview']
+    res = search_movie_overview_reviews(movie_title, year, primary_release_year)
+    return [ res['overview'] if res is not None else res ]
 
 # get movie overview and reviews based on movie title
 def search_movie_overview_reviews(movie_title: str, year: int = None, primary_release_year:int = None) -> object:

@@ -22,8 +22,8 @@ def movie_reviews_summarise_sentiment(movie_title: str, reviews: list, summarize
         summary = summarizer(review, summary_max_length)
         sentiment = analyzer(review)
         result.append({ 
-            'title': movie_title, 
-            'review': review, 
+            'title': movie_title,
+            'review': review,
             'summary': summary,
             'sentiment': sentiment
         })

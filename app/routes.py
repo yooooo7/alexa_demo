@@ -12,6 +12,7 @@ from collections import Counter
 import random
 
 current_node = None
+last_entities = (None, None)
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -20,6 +21,7 @@ def index():
 @app.route('/dialog', methods = ['POST'])
 def dialogue_flow():
     global current_node
+    global last_entities
 
     # check request
     has_request, message = check_request()
@@ -29,6 +31,10 @@ def dialogue_flow():
     
     # NLU
     entities, user_sentiment = NLU(message)
+    if entities == (None, None):
+        entities = last_entities
+    else:
+        last_entities = entities
 
     # renew current node
     isExist, current_node = dialog_manager(current_node, user_sentiment, entities[1])
@@ -40,12 +46,12 @@ def dialogue_flow():
     current_node.sentiment = user_sentiment
     current_node.entities = entities
 
-    sentence = current_node.template2sentence()
+    sentence = current_node.template2sentence(entities[1])
     
     return Response(json.dumps({ 'output': sentence }), mimetype='application/json')
 
 def check_match(item, items):
-    if items is None:
+    if items is None or items is 'any':
         return True
 
     if item in items:
@@ -54,7 +60,6 @@ def check_match(item, items):
     return False
 
 def dialog_manager(cuurent_node, sentiment, entities):
-    print(sentiment, entities)
     if current_node is None:
         return True, ROOT
 
@@ -65,7 +70,6 @@ def dialog_manager(cuurent_node, sentiment, entities):
     for node in node_candidates:
         current_sentiments = node_candidates[node]['sentiment']
         current_entities = node_candidates[node]['entities']
-        print(current_sentiments, current_entities)
         if check_match(sentiment, current_sentiments) and check_match(entities, current_entities):
             return True, node
     

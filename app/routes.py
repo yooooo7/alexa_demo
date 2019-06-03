@@ -77,7 +77,9 @@ def dialog_manager(cuurent_node, sentiment, entities):
 
 def clear_globals():
     global current_node
+    global last_entities
     current_node = None
+    last_entities = (None, None)
 
 def check_request():
     # check if request body exist

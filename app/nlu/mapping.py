@@ -61,7 +61,3 @@ def mapping (user_input, dic = dic):
         if len(common_part) == len(dic_i):
             return dic[i][1],' '.join(common_part)     
     return None, None
-
-# print(mapping(['star', 'war']))
-print(normalization('the harry potter'))
-print(mapping(['harry', 'potter']))

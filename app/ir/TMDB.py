@@ -17,7 +17,7 @@ def send_request(url: str, params: object) -> object:
         response = 'parse json error: {}'.format(e.args)
     return response
 
-# search movie by movie title
+ # search movie by movie title
 def search_movie(movie_title: str, page: int = 1, year: int = None, primary_release_year: int = None) -> object:
     """
     Arguments:
@@ -40,6 +40,86 @@ def search_movie(movie_title: str, page: int = 1, year: int = None, primary_rele
     query = {**params, **p}
     return send_request(url, query)
 
+# get movie detail by movie id
+def get_movie_detail(movie_id) -> object:
+    """
+    Arguments:
+    movie_id -- TMDB/IMDB movie ID
+    
+    Returns:
+    json formatted movie details
+    """
+    url = f'{HOST}movie/{movie_id}'
+    query = {**params}
+    return send_request(url, query)
+
+# search movie date
+def get_movie_date(movie_id) -> object:
+    """
+    Arguments:
+    movie_id -- TMDB/IMDB movie ID
+    
+    Returns:
+    json formatted movies released date
+    """
+    url = f'{HOST}movie/{movie_id}/release_dates'
+    query = {**params}
+    return send_request(url, query)
+
+# search movie by actor name
+def search_movie_byActor( region: str, actor_name: str, page: int = 1) -> object:
+    """
+    Arguments:
+    movie_title -- name of a movie
+    page -- page number of result
+    include_adult -- adult movie
+    region -- country
+    
+    Returns:
+    json formatted response of movie list
+    """
+    url = f'{HOST}search/person'
+    p = {
+        'language': 'en-US',
+        'query': actor_name,
+        'page': page,
+        'include_adult': 'false',
+        'region': None
+    }
+    query = {**params, **p}
+    return send_request(url, query)
+
+# get movie reviews
+def movie_reviews(movie_id, page: int = 1) -> object:
+    """
+    Arguments:
+    movie_id -- TMDB/IMDB movie ID
+    page -- page number of reviews
+    
+    Returns:
+    json formatted movie reviews list
+    """
+    url = f'{HOST}movie/{movie_id}/reviews'
+    p = { 'page': page }
+    query = {**params, **p}
+    return send_request(url, query)
+
+# get movie overview
+def movie_overview(movie_id, page: int = 1) -> object:
+    """
+    Arguments:
+    movie_id -- TMDB/IMDB movie ID
+    page -- page number of reviews
+    
+    Returns:
+    json formatted movie reviews list
+    """
+    url = f'{HOST}movie/{movie_id}/reviews'
+    p = { 'page': page }
+    query = {**params, **p}
+    return send_request(url, query)
+
+
 def search_movie_title(movie_title: str, page: int = 1, year: int = None, primary_release_year: int = None) -> object:
     # get search results by search movie API
     search_results = search_movie(movie_title, year = year, primary_release_year = primary_release_year)
@@ -60,22 +140,7 @@ def search_movie_title(movie_title: str, page: int = 1, year: int = None, primar
     searched_movie = search_results[0]
     movie_name = searched_movie['title']
     
-    return movie_name
-
-# get movie reviews
-def movie_reviews(movie_id, page: int = 1) -> object:
-    """
-    Arguments:
-    movie_id -- TMDB/IMDB movie ID
-    page -- page number of reviews
-    
-    Returns:
-    json formatted movie reviews list
-    """
-    url = '{}movie/{}/reviews'.format(HOST, movie_id)
-    p = { 'page': page }
-    query = {**params, **p}
-    return send_request(url, query)
+    return [movie_name]
 
 # get movie related actors and staffs information
 def movie_credits(movie_id) -> object:
@@ -164,3 +229,118 @@ def search_movie_overview_reviews(movie_title: str, year: int = None, primary_re
     reviews = [ review['content'] for review in review_results ]
 
     return { 'overview': movie_overview, 'reviews': reviews }
+
+
+# get movie label based on movie name
+def search_movie_labels(movie_name:str) ->object:
+    """
+    Arguments:
+    movie_name -- name of a movie
+    """
+    
+    # get search results by search movie API
+    search_results = search_movie(movie_name)
+    
+    # if error occur print that error and return None
+    if 'results' not in search_results:
+        print(search_results)
+        return None
+
+    # check if result exist
+    if len(search_results) == 0:
+        print('Can not find any results')
+        return None
+    
+    # get movie id
+    movie_Id = search_results['results'][0]['id']
+    #get genres 
+    genres = get_movie_detail(movie_Id)['genres']
+    l = []
+    for i in range(len(genres)):
+            l.append(genres[i]['name'])
+    return l
+
+
+def search_movie_reviews(movie_name:str) ->object:
+    # get search results by search movie API
+    search_results = search_movie(movie_name)
+    
+    # if error occur print that error and return None
+    if 'results' not in search_results:
+        print(search_results)
+        return None
+
+    # check if result exist
+    if len(search_results) == 0:
+        print('Can not find any results')
+        return None
+    
+    # get movie id
+    movie_Id = search_results['results'][0]['id']
+    
+    # get movie review
+    review_results = movie_reviews(movie_Id)['results']
+    review = str(review_results[0]['content'])
+    return review
+
+def search_movie_date(movie_name:str) ->object:
+    # get search results by search movie API
+    search_results = search_movie(movie_name)
+    
+    # if error occur print that error and return None
+    if 'results' not in search_results:
+        print(search_results)
+        return None
+
+    # check if result exist
+    if len(search_results) == 0:
+        print('Can not find any results')
+        return None
+    
+    # get movie id
+    movie_Id = search_results['results'][0]['id']
+    
+    #get release date
+    date = get_movie_date(movie_Id)['results'][0]['release_dates'][0]['release_date']
+    
+    return date
+
+def search_actor_movie(actor_name:str) ->object:
+    # get movie results by search actor name 
+    movies_results = search_movie_byActor('',actor_name)
+    
+     # if error occur print that error and return None
+    if 'results' not in movies_results:
+        print(movies_results)
+        return None
+
+    # check if result exist
+    if len(movies_results) == 0:
+        print('Can not find any results')
+        return None
+    
+    # get movie title 
+    movie = movies_results['results'][0]['known_for'][0]['title']
+
+    return movie
+
+
+def search_actor_description(actor_name:str) ->object:
+    # get movie results by search actor name 
+    movies_results = search_movie_byActor('',actor_name)
+    
+     # if error occur print that error and return None
+    if 'results' not in movies_results:
+        print(movies_results)
+        return None
+
+    # check if result exist
+    if len(movies_results) == 0:
+        print('Can not find any results')
+        return None
+    
+    
+    # get movie description 
+    description = movies_results['results'][0]['known_for'][0]['overview']
+    return description
+

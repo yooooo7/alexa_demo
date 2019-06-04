@@ -6,6 +6,7 @@ from nltk.corpus import stopwords
 
 nltk.download('wordnet')
 nltk.download('punkt')
+nltk.download('stopwords')
 
 def normalization(sentence):
     #1. lower case
@@ -33,5 +34,9 @@ def normalization(sentence):
     # remove ' '
     for _ in range(lemmatized_sentence.count(' ')):
         lemmatized_sentence.remove(' ')
-        
-    return lemmatized_sentence
+    
+    # stopword removal
+    stop_words = set(stopwords.words('english'))
+    removal_sentence = [i for i in lemmatized_sentence if not i in stop_words]
+
+    return removal_sentence

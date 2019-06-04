@@ -1,4 +1,4 @@
-from ..ir import search_movie_2_actors, search_movie_overview
+from ..ir import search_movie_2_actors, search_movie_overview, search_movie_title,search_movie_labels,search_movie_reviews,search_movie_date,search_actor_movie,search_actor_description
 import random
 
 class Node():
@@ -83,15 +83,15 @@ NODE_7_3 = Node(
 )
 NODE_8_1 = Node(
     templates = ['Interesting,{}','wow,{}','amazing,{}','good to hear that,{}'],
-    func = search_movie_reviews  #undefined func
+    func = search_movie_reviews  
 )
 NODE_8_2 = Node(
     templates = ['I see,{}','you are thoughtful,{}','well,{}'],
-    func = search_movie_reviews  #undefined func
+    func = search_movie_reviews  
 )
 NODE_8_3 = Node(
     templates = ['Well,{}','I see,{}','any way, it did well at the box office, {}'],
-    func = search_movie_reviews  #undefined func
+    func = search_movie_reviews  
 )
 NODE_9_1 = Node(
     templates = [
@@ -106,11 +106,11 @@ NODE_10_1 = Node(
         'and it can be found under the category of {}, {} and {}',
         'and it is labeled as {}, {} and {}'
     ],
-    func = search_movie_labels  #undefined func
+    func = search_movie_labels  
 )
 NODE_11_1 = Node(
     templates = ['I highly recommend you {}'],
-    func = search_actor_2_movie #undefined func
+    func = search_actor_movie 
 )
 NODE_12_1 = Node(
     templates  = ['{}'],
@@ -121,7 +121,7 @@ NODE_13_1 = Node(
         'it was released in {}, doing very well, check it out and hope you will like it',
         'it was realeased in {} and has become a box office hit,I am sure you will love it'
     ],
-    func = search_movie_release_date  #undefined func
+    func = search_movie_date  
 )
 
 dialog_mapping = {
@@ -164,22 +164,22 @@ dialog_mapping = {
     NODE_6_1:{
         NODE_7_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_7_2:{'sentiment': ['other'],'entities':'any'},
-        NODE_7_1:{'sentiment': ['neg'],'entities':'any'}
+        NODE_7_3:{'sentiment': ['neg'],'entities':'any'}
     },
     NODE_7_1:{
         NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_8_2:{'sentiment': ['other'],'entities':'any'},
-        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+        NODE_8_3:{'sentiment': ['neg'],'entities':'any'}
     },
     NODE_7_2:{
         NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_8_2:{'sentiment': ['other'],'entities':'any'},
-        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+        NODE_8_3:{'sentiment': ['neg'],'entities':'any'}
     },
     NODE_7_3:{
         NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_8_2:{'sentiment': ['other'],'entities':'any'},
-        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+        NODE_8_3:{'sentiment': ['neg'],'entities':'any'}
     },
     NODE_8_1:{
         NODE_9_1:{'sentiment': None, 'entities': 'any'}

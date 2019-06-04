@@ -1,6 +1,5 @@
 from .summarizers import lexRank_summarizer
 from ..utils import sentimentIntensity_analyzer
-from .template.movie import MOVIE_TEMPLATE
 from .dialogGraph import *
 
 # using movie title to get a pd.dataframe of reviews, summaries and sentiments

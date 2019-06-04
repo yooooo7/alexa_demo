@@ -3,9 +3,9 @@ from flask import request, Response
 from app import app
 
 from .ir import search_movie, search_movie_overview_reviews, search_movie_actors, search_movie_title
-from .nlu import NLU, topic_detection
+from .nlu import NLU
 from .nlg import movie_reviews_summarise_sentiment, sentimentIntensity_analyzer, lexRank_summarizer
-from .nlg import MOVIE_TEMPLATE, ROOT, dialog_mapping
+from .nlg import ROOT, dialog_mapping
 
 import json
 from collections import Counter
@@ -31,6 +31,7 @@ def dialogue_flow():
     
     # NLU
     entities, user_sentiment = NLU(message)
+    print(entities, last_entities)
     if entities == (None, None):
         entities = last_entities
     else:

@@ -50,7 +50,7 @@ def get_movie_detail(movie_id) -> object:
     Returns:
     json formatted movie details
     """
-    url = f'{HOST}movie/{movie_id}'
+    url = '{}movie/{}'.format(HOST, movie_id)
     query = {**params}
     return send_request(url, query)
 
@@ -63,7 +63,7 @@ def get_movie_date(movie_id) -> object:
     Returns:
     json formatted movies released date
     """
-    url = f'{HOST}movie/{movie_id}/release_dates'
+    url = '{}movie/{}/release_dates'.format(HOST, movie_id)
     query = {**params}
     return send_request(url, query)
 
@@ -79,7 +79,7 @@ def search_movie_byActor( region: str, actor_name: str, page: int = 1) -> object
     Returns:
     json formatted response of movie list
     """
-    url = f'{HOST}search/person'
+    url = '{}search/person'.format(HOST)
     p = {
         'language': 'en-US',
         'query': actor_name,
@@ -100,7 +100,7 @@ def movie_reviews(movie_id, page: int = 1) -> object:
     Returns:
     json formatted movie reviews list
     """
-    url = f'{HOST}movie/{movie_id}/reviews'
+    url = '{}movie/{}/reviews'.format(HOST, movie_id)
     p = { 'page': page }
     query = {**params, **p}
     return send_request(url, query)
@@ -115,7 +115,7 @@ def movie_overview(movie_id, page: int = 1) -> object:
     Returns:
     json formatted movie reviews list
     """
-    url = f'{HOST}movie/{movie_id}/reviews'
+    url = '{}movie/{}/reviews'.format(HOST, movie_id)
     p = { 'page': page }
     query = {**params, **p}
     return send_request(url, query)
@@ -152,7 +152,7 @@ def movie_credits(movie_id) -> object:
     Returns:
     json formatted movie related people (actors and staffs) list
     """
-    url = f'{HOST}movie/{movie_id}/credits'
+    url = '{}movie/{}/credits'.format(HOST, movie_id)
     p = {}
     query = {**params, **p}
     return send_request(url, query)

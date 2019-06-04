@@ -53,8 +53,75 @@ NODE_4_1 = Node(
     func = search_movie_overview
 )
 NODE_4_2 = Node(
-    templates = ['I want to share you the story of it even you do not like it.{}'],
+    templates = ['I want to share you the story of it.{}'],
     func = search_movie_overview
+)
+NODE_5_1 = Node(
+    templates = ['what is your favorite movie of all the time']
+)
+NODE_6_1 = Node(
+    templates = [
+        'my best friend and I like the {} best.',
+        '{} is my favorite.',
+        '{} is amazing.',
+        '{}, I cannot forget it since I first time watched it'
+    ],
+    func = search_movie_title
+)
+NODE_7_1 = Node(
+    templates = ['How do you like the film?'
+                'tell me more about your feelings',
+                'Amazing, tell me more']
+)
+NODE_7_2 = Node(
+    templates = ['tell me more about what do you think',
+                'I see, can you comment more']
+)
+NODE_7_3 = Node(
+    templates = ['Why you comment negatively about this film',
+                'may I ask for the reason']
+)
+NODE_8_1 = Node(
+    templates = ['Interesting,{}','wow,{}','amazing,{}','good to hear that,{}'],
+    func = search_movie_reviews  #undefined func
+)
+NODE_8_2 = Node(
+    templates = ['I see,{}','you are thoughtful,{}','well,{}'],
+    func = search_movie_reviews  #undefined func
+)
+NODE_8_3 = Node(
+    templates = ['Well,{}','I see,{}','any way, it did well at the box office, {}'],
+    func = search_movie_reviews  #undefined func
+)
+NODE_9_1 = Node(
+    templates = [
+        'It stars {} and {}',
+        'I like the performance of {} and {} in it'
+    ],
+    func = search_movie_2_actors
+)
+NODE_10_1 = Node(
+    templates = [
+        'and this film is labeled {},{} and {}',
+        'and it can be found under the category of {}, {} and {}',
+        'and it is labeled as {}, {} and {}'
+    ],
+    func = search_movie_labels  #undefined func
+)
+NODE_11_1 = Node(
+    templates = ['I highly recommend you {}'],
+    func = search_actor_2_movie #undefined func
+)
+NODE_12_1 = Node(
+    templates  = ['{}'],
+    func = search_movie_overview
+)
+NODE_13_1 = Node(
+    templates = [
+        'it was released in {}, doing very well, check it out and hope you will like it',
+        'it was realeased in {} and has become a box office hit,I am sure you will love it'
+    ],
+    func = search_movie_release_date  #undefined func
 )
 
 dialog_mapping = {
@@ -84,5 +151,56 @@ dialog_mapping = {
     NODE_3_1: {
         NODE_4_1: { 'sentiment': ['pos'], 'entities': None },
         NODE_4_2: { 'sentiment': ['neg', 'other'], 'entities': None }
+    },
+    NODE_4_1:{
+        NODE_5_1:{'sentiment': None, 'entities':'any'}
+    },
+    NODE_4_2:{
+        NODE_5_1:{'sentiment': None, 'entities':'any'}
+    },
+    NODE_5_1:{
+        NODE_6_1:{'sentiment': None, 'entities': 'any'}
+    },
+    NODE_6_1:{
+        NODE_7_1:{'sentiment': ['pos'],'entities':'any'},
+        NODE_7_2:{'sentiment': ['other'],'entities':'any'},
+        NODE_7_1:{'sentiment': ['neg'],'entities':'any'}
+    },
+    NODE_7_1:{
+        NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
+        NODE_8_2:{'sentiment': ['other'],'entities':'any'},
+        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+    },
+    NODE_7_2:{
+        NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
+        NODE_8_2:{'sentiment': ['other'],'entities':'any'},
+        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+    },
+    NODE_7_3:{
+        NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
+        NODE_8_2:{'sentiment': ['other'],'entities':'any'},
+        NODE_8_1:{'sentiment': ['neg'],'entities':'any'}
+    },
+    NODE_8_1:{
+        NODE_9_1:{'sentiment': None, 'entities': 'any'}
+    },
+    NODE_8_2:{
+        NODE_9_1:{'sentiment': None, 'entities': 'any'}
+    },
+    NODE_8_3:{
+        NODE_9_1:{'sentiment': None, 'entities': 'any'}
+    },
+    NODE_9_1:{
+        NODE_10_1:{'sentiment': None, 'entities': 'any'}
+    },
+    NODE_10_1:{
+        NODE_11_1:{'sentiment': None,'entities':'any'}
+    },
+    NODE_11_1:{
+        NODE_12_1:{'sentiment': None,'entities':'any'}
+    },
+    NODE_12_1:{
+        NODE_13_1:{'sentiment': None,'entities':'any'}
     }
+    
 }

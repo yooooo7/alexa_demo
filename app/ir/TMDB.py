@@ -1,5 +1,6 @@
 import requests
 
+
 # set constant variables
 API_KEY = '5e1252eceeb2b4e0f784b73538d47d65'
 HOST = 'https://api.themoviedb.org/3/'
@@ -279,31 +280,61 @@ def search_movie_reviews(movie_name:str) ->object:
     movie_Id = search_results['results'][0]['id']
     
     # get movie review
-    review_results = movie_reviews(movie_Id)['results']
-    review = str(review_results[0]['content'])
-    return review
+    if movie_reviews(movie_Id)!= None:
+        review_results = movie_reviews(movie_Id)['results']
+        if review_results:
+            if review_results[0]:
+                if 'content' in review_results[0]== True:
+                    review = str(review_results[0]['content'])
+                    return review
+                else: 
+                    review = ['I agree with you']
+                    return review
+            else: 
+                review = ['i totally agree with you']
+                return review
+        else: 
+            review = ['i totally agree with you']
+            return review
+    else: 
+        review = ['yeah']
+        return review
 
-def search_movie_date(movie_name:str) ->object:
-    # get search results by search movie API
-    search_results = search_movie(movie_name)
-    
+
+
+
+
+def search_movie_date(actor_name:str) ->object:
+    movies_results = search_movie_byActor('',actor_name)
     # if error occur print that error and return None
-    if 'results' not in search_results:
-        print(search_results)
+    if 'results' not in movies_results:
+        print(movies_results)
         return None
 
     # check if result exist
-    if len(search_results) == 0:
+    if len(movies_results) == 0:
         print('Can not find any results')
         return None
     
     # get movie id
-    movie_Id = search_results['results'][0]['id']
-    
+
+    movie_Id = movies_results['results'][0]['id']
+
+
     #get release date
     date = get_movie_date(movie_Id)['results'][0]['release_dates'][0]['release_date']
-    
-    return date
+    year = [date][0][:4]
+    year = [year][0]
+
+    return [year]
+
+
+
+
+
+
+
+
 
 def search_actor_movie(actor_name:str) ->object:
     # get movie results by search actor name 
@@ -320,6 +351,29 @@ def search_actor_movie(actor_name:str) ->object:
         return None
     
     # get movie title 
+    if movies_results['results']:
+        if movies_results['results'][0]:
+            if movies_results['results'][0]['known_for']:
+                if movies_results['results'][0]['known_for'][0]:
+                    if movies_results['results'][0]['known_for'][0]['title']:
+                        movie = movies_results['results'][0]['known_for'][0]['title']
+                        return [movie]
+                    else: 
+                        movie = ['I have not watched others'] 
+                        return movie
+                else:
+                    movie = ['I have not watched others'] 
+                    return movie
+            else:
+                movie = ['I have not watched others'] 
+                return movie
+        else:
+            movie = ['I have not watched others'] 
+            return movie
+    else: 
+       movie = ['I have not watched others'] 
+       return movie
+
     movie = movies_results['results'][0]['known_for'][0]['title']
 
     return movie
@@ -342,5 +396,5 @@ def search_actor_description(actor_name:str) ->object:
     
     # get movie description 
     description = movies_results['results'][0]['known_for'][0]['overview']
-    return description
+    return [description]
 

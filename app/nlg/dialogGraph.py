@@ -114,7 +114,7 @@ NODE_11_1 = Node(
 )
 NODE_12_1 = Node(
     templates  = ['{}'],
-    func = search_movie_overview
+    func = search_actor_description
 )
 NODE_13_1 = Node(
     templates = [

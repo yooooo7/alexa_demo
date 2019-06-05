@@ -23,13 +23,13 @@ class Node():
 ROOT = Node(templates = ['Hi, this is Sydney Jack. How are you?', 'how are you?', 'how\'s it going?'])
 
 NODE_1_1 = Node(templates = [
-    'That\'s good! Sports or movies are topics you could be interested in and we could talk about any of them.'
+    'That\'s good! Movies is topic you could be interested in and we could talk about it.'
     ])
 NODE_1_2 = Node(templates = [
-    'Sorry to hear that. Sports or movies are topics you could be interested in and we could talk about any of them.'
+    'Sorry to hear that. Movies is topic you could be interested in and we could talk about it.'
     ])
 NODE_1_3 = Node(templates = [
-    'Sports or movies are topics you could be interested in and we could talk about any of them.'
+    'Movies is topic you could be interested in and we could talk about it.'
     ])
 
 NODE_2_1 = Node(templates = [
@@ -56,9 +56,11 @@ NODE_4_2 = Node(
     templates = ['I want to share you the story of it.{}'],
     func = search_movie_overview
 )
+
 NODE_5_1 = Node(
     templates = ['what is your favorite movie of all the time']
 )
+
 NODE_6_1 = Node(
     templates = [
         'my best friend and I like the {} best.',
@@ -68,6 +70,7 @@ NODE_6_1 = Node(
     ],
     func = search_movie_title
 )
+
 NODE_7_1 = Node(
     templates = ['How do you like the film?'
                 'tell me more about your feelings',
@@ -81,6 +84,7 @@ NODE_7_3 = Node(
     templates = ['Why you comment negatively about this film',
                 'may I ask for the reason']
 )
+
 NODE_8_1 = Node(
     templates = ['Interesting,{}','wow,{}','amazing,{}','good to hear that,{}'],
     func = search_movie_reviews  
@@ -93,6 +97,7 @@ NODE_8_3 = Node(
     templates = ['Well,{}','I see,{}','any way, it did well at the box office, {}'],
     func = search_movie_reviews  
 )
+
 NODE_9_1 = Node(
     templates = [
         'It stars {} and {}',
@@ -100,6 +105,7 @@ NODE_9_1 = Node(
     ],
     func = search_movie_2_actors
 )
+
 NODE_10_1 = Node(
     templates = [
         'and this film is labeled {},{} and {}',
@@ -108,14 +114,17 @@ NODE_10_1 = Node(
     ],
     func = search_movie_labels  
 )
+
 NODE_11_1 = Node(
     templates = ['I highly recommend you {}'],
     func = search_actor_movie 
 )
+
 NODE_12_1 = Node(
     templates  = ['{}'],
     func = search_actor_description
 )
+
 NODE_13_1 = Node(
     templates = [
         'it was released in {}, doing very well, check it out and hope you will like it',
@@ -152,20 +161,24 @@ dialog_mapping = {
         NODE_4_1: { 'sentiment': ['pos'], 'entities': None },
         NODE_4_2: { 'sentiment': ['neg', 'other'], 'entities': None }
     },
+
     NODE_4_1:{
         NODE_5_1:{'sentiment': None, 'entities':'any'}
     },
     NODE_4_2:{
         NODE_5_1:{'sentiment': None, 'entities':'any'}
     },
+
     NODE_5_1:{
         NODE_6_1:{'sentiment': None, 'entities': 'any'}
     },
+
     NODE_6_1:{
         NODE_7_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_7_2:{'sentiment': ['other'],'entities':'any'},
         NODE_7_3:{'sentiment': ['neg'],'entities':'any'}
     },
+
     NODE_7_1:{
         NODE_8_1:{'sentiment': ['pos'],'entities':'any'},
         NODE_8_2:{'sentiment': ['other'],'entities':'any'},
@@ -181,6 +194,7 @@ dialog_mapping = {
         NODE_8_2:{'sentiment': ['other'],'entities':'any'},
         NODE_8_3:{'sentiment': ['neg'],'entities':'any'}
     },
+
     NODE_8_1:{
         NODE_9_1:{'sentiment': None, 'entities': 'any'}
     },
@@ -190,15 +204,19 @@ dialog_mapping = {
     NODE_8_3:{
         NODE_9_1:{'sentiment': None, 'entities': 'any'}
     },
+
     NODE_9_1:{
         NODE_10_1:{'sentiment': None, 'entities': 'any'}
     },
+
     NODE_10_1:{
         NODE_11_1:{'sentiment': None,'entities':'any'}
     },
+
     NODE_11_1:{
         NODE_12_1:{'sentiment': None,'entities':'any'}
     },
+
     NODE_12_1:{
         NODE_13_1:{'sentiment': None,'entities':'any'}
     }

@@ -60,7 +60,7 @@ def check_match(item, items):
 
     return False
 
-def dialog_manager(cuurent_node, sentiment, entities):
+def dialog_manager(current_node, sentiment, entities):
     if current_node is None:
         return True, ROOT
 

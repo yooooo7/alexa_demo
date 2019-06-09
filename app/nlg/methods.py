@@ -159,7 +159,11 @@ def movie_review_summary(movie_title):
         return False, error_message
     
     # get movie id
-    review = review_results['results'][0]
+    reviews = review_results['results']
+    if len(reviews) == 0:
+        return False, 'do not find any review of this movie'
+    
+    review = reviews[0]
     review_content = review['content']
 
     return True, [ lexRank_summarizer(review_content, 2) ]

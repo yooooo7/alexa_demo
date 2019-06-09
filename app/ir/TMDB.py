@@ -28,7 +28,7 @@ def movie_similars(movie_id, page: int = 1) -> object:
     Returns:
     json formatted similar movies list
     """
-    url = f'{HOST}movie/{movie_id}/similar'
+    url = '{}movie/{}/similar'.format(HOST, movie_id)
     p = { 'page': page, 'language': 'en-US' }
     query = {**params, **p}
     return send_request(url, query)

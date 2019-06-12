@@ -1,11 +1,11 @@
 import re
 
 intent_mapping = {
-    r'.*([^a-z]*overview|[^a-z]*description)': 'askMovieOverview',
+    r'.*([^a-z]*overview|[^a-z]*description|[^a-z]*story)': 'askMovieOverview',
     r'.*[^a-z]*review': 'askMovieReview',
     r'.*([^a-z]*release|[^a-z]*date)': 'askMovieReleaseDate',
     r'.*([^a-z]*label|[^a-z]*genre|[^a-z]*category)': 'askMovieLabel',
-    r'other (movie|movies)': 'askActorOtherMovies',
+    r'.*[^a-z]*other (movie|movies)': 'askActorOtherMovies',
     # TODO: can not recognize 'other movie' after key words
     r'((?!other (movie|movies)).)*(actor|star)((?!other (movie|movies)).)*': 'askLeadActor',
     r'.*[^a-z]*suggest': 'suggestMovie',

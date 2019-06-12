@@ -37,7 +37,6 @@ def search_2_sug_movies(movie_title):
     
     movie_results = movies['results']
     movies = [ movie['title'] for movie in movie_results ]
-    print(movie_results, movies)
 
     if len(movies) < 2:
         return False, 'do not have enough similar movies'

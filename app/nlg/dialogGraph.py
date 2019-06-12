@@ -25,17 +25,17 @@ class Node():
 ROOT = Node(templates = ['Hey, how are you?', 'how are you?', 'Hey, how\'s it going?'])
 
 NODE_1_POS_OTHER = Node(templates = ['nice to hear that, what\'s your favourite movie'])
-NODE_1_NEG = Node(templates = ['sorry to hear that, forget it and let\'s talk about your favourite movie, what\'s the name'])
+NODE_1_NEG = Node(templates = ['sorry to hear that, forget it and let\'s talk about your favourite movie!'])
 
 NODE_2_FAV_MOVIE_INFO = Node(templates = [
-    'You can ask me movie leading actor, observer reviews, release or I can suggest a movie you may like'
+    'Really, do you want to see observers\' reviews or recommend you similar movies?'
 ])
 NODE_2_MOVIE_INFO = Node(templates = [
-    'You can ask me movie overview, leading actors, genres, release date, and observer reviews'
+    'What would you like to know? Movie overview, leading actors, genres, release date and observer reviews.'
 ])
 
 NODE_3_SUG_MOVIE = Node(
-    templates = ['I think you would enjoy {} and {}, which one you would like to learn more'],
+    templates = ['I think you would enjoy {} and {}, which one you would like to know more'],
     func = search_2_sug_movies
 )
 NODE_3_LEAD_ACTOR = Node(
@@ -58,13 +58,12 @@ NODE_3_RELEASE_DATE = Node(
 )
 NODE_3_OVERVIEW = Node(
     templates = [
-        'I am excited to share the story with you. {}. \
-        Come on and ask me leading actors, category, release date, or observer reviews'
+        'I am excited to share the story with you. {}'
     ],
     func = movie_overview_summary
 )
 NODE_3_REVIEW = Node(
-    templates = ['Some observer comment: {}, anyway, you can ask me more information about this movie'],
+    templates = ['Some observer comment: {} anyway, any other things you want to know?'],
     func = movie_review_summary
 )
 
@@ -76,7 +75,7 @@ NODE_5_ACTOR_INFO = Node(
 )
 
 NODE_6_BIRTH_INFO = Node(
-    templates = ['{} was born in {}, in {}. I can tell you detailed biography if you want, or other movies {} acted'],
+    templates = ['{} was born in {}, in {}. Do you want to know more about other movies she acted?'],
     func = search_actor_birth_gender
 )
 NODE_6_BIOGRAPHY = Node(
@@ -84,7 +83,7 @@ NODE_6_BIOGRAPHY = Node(
     func = search_actor_bio_gender
 )
 NODE_6_OTHER_MOVIES = Node(
-    templates = ['{} and {}, which one would you like to know more?'],
+    templates = ['She also acted in {} and {}. Do you want me to tell more?'],
     func = search_actor_2_movies
 )
 
@@ -177,26 +176,30 @@ dialog_mapping = {
     },
 
     NODE_4_CHOOSE_ACTOR: {
-        NODE_5_ACTOR_INFO: { 'sentiment': None, 'intent': None }
-    },
-
-    NODE_5_ACTOR_INFO: {
-        NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
-        NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
-        NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
+        NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': None }
     },
 
     NODE_6_BIRTH_INFO: {
-        NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
-        NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
-        NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
-    },
-    NODE_6_BIOGRAPHY: {
-        NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
-        NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
-        NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
-    },
-    NODE_6_OTHER_MOVIES: {
-        NODE_2_MOVIE_INFO: { 'sentiment': None, 'intent': None }
+        NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': None }
     }
+
+    # NODE_5_ACTOR_INFO: {
+    #     NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
+    #     NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
+    #     NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
+    # },
+
+    # NODE_6_BIRTH_INFO: {
+    #     NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
+    #     NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
+    #     NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
+    # },
+    # NODE_6_BIOGRAPHY: {
+    #     NODE_6_BIRTH_INFO: { 'sentiment': None, 'intent': 'askActorBirthInfo' },
+    #     NODE_6_BIOGRAPHY: { 'sentiment': None, 'intent': 'askActorBio' },
+    #     NODE_6_OTHER_MOVIES: { 'sentiment': None, 'intent': 'askActorOtherMovies' }
+    # },
+    # NODE_6_OTHER_MOVIES: {
+    #     NODE_2_MOVIE_INFO: { 'sentiment': None, 'intent': None }
+    # }
 }
